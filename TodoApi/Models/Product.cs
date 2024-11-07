@@ -2,8 +2,8 @@
 
 public class Product
 {
-    public long Id { get; set; }
-    public string? Name { get; set; }
+    public long id { get; set; }
+    public string? name { get; set; }
     public decimal price { get; set; }
     public string? category { get; set; }
 }

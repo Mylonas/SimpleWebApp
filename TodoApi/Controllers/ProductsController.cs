@@ -35,7 +35,7 @@ namespace TodoApi.Controllers
 
             if (product == null)
             {
-                return NotFound();
+                return NotFound("No products found");
             }
 
             return product;
@@ -46,7 +46,7 @@ namespace TodoApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(long id, Product product)
         {
-            if (id != product.Id)
+            if (id != product.id)
             {
                 return BadRequest();
             }
@@ -81,7 +81,7 @@ namespace TodoApi.Controllers
             await _context.SaveChangesAsync();
 
             //return CreatedAtAction("GetProduct", new { id = product.Id }, product);
-            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+            return CreatedAtAction(nameof(GetProduct), new { id = product.id }, product);
         }
 
         // DELETE: api/Products/5
@@ -102,7 +102,44 @@ namespace TodoApi.Controllers
 
         private bool ProductExists(long id)
         {
-            return _context.Products.Any(e => e.Id == id);
+            return _context.Products.Any(e => e.id == id);
         }
+
+        // GET: api/Products/ByPriceRange?min=10&max=100
+        [HttpGet("ByPriceRange")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetByPriceRange(long id, decimal min, decimal max)
+        {
+            if (min < 0 || max < 0 || min > max)
+            {
+                return BadRequest("Invalid price range. Ensure that min and max are positive and min is less than or equal to max.");
+            }
+
+            var product = await _context.Products.FindAsync(id);
+                //.Where(p => p.Price >= min && p.Price <= max)
+              //  .ToListAsync();
+
+            if (_context.Products.Any(e => e.id == id))
+            {
+                return NotFound("No products found within the specified price range.");
+            }
+
+            return Ok(product);
+        }
+
+        [HttpGet("id")]
+        public async Task<ActionResult<Product>> GetProductById(long id)
+        {
+            try
+            {
+                var product = await _context.Products.FindAsync(id);
+                if (product == null) return NotFound();
+                return product;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
     }
 }
