@@ -1,9 +1,9 @@
-﻿namespace TodoApi.Models;
+namespace TodoApi.Models;
 
 public class Product
 {
-    public long id { get; set; }
-    public string? name { get; set; }
-    public decimal price { get; set; }
-    public string? category { get; set; }
+    public long Id { get; set; }
+    public string? Name { get; set; }
+    public decimal Price { get; set; }
+    public string? Category { get; set; }
 }
