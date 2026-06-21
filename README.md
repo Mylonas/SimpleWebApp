@@ -1,79 +1,71 @@
-# Product
+# SimpleWebApp — Products API
 
-This is a simple backend API built with ASP.NET Core, demonstrating CRUD operations, SQL data querying, data aggregation, and validation using a `Product` entity.
+A simple backend REST API built with ASP.NET Core 8, demonstrating CRUD operations, price range filtering, and validation using a `Product` entity and an in-memory EF Core database.
 
-## Table of Contents
+[![CI](https://github.com/Mylonas/SimpleWebApp/actions/workflows/ci.yml/badge.svg)](https://github.com/Mylonas/SimpleWebApp/actions/workflows/ci.yml)
 
-- [Project Overview](#project-overview)
-- [Technologies Used](#technologies-used)
-- [Setup Instructions](#setup-instructions)
-- [API Endpoints](#api-endpoints)
-- [Assumptions](#assumptions)
-- [Running Tests](#running-tests)
+## Technologies
 
-## Project Overview
+- **ASP.NET Core 8** — web API framework
+- **Entity Framework Core (InMemory)** — data access, in-memory database for simplicity
+- **Swagger / Scalar** — interactive API docs at `/swagger` in development
+- **xUnit** — unit tests
 
-This API is designed to manage a `Product` entity in a local SQLite database. The project includes CRUD operations, filtering based on price range and validation.
-
-## Technologies Used
-
-- **ASP.NET Core** - for building the API
-- **SQLite** - as the database
-- **Entity Framework Core** - for database interactions
-
-## Setup Instructions
+## Setup
 
 ### Prerequisites
 
 - [.NET SDK 8.0+](https://dotnet.microsoft.com/download)
-- (Optional) A tool to interact with SQLite databases, such as [DB Browser for SQLite](https://sqlitebrowser.org/)
 
-### Installation Steps
+### Run
 
-1. Clone this repository:
-    ```bash
-    git clone https://github.com/Mylonas/SimpleWebApp.git
-    ```
+```bash
+git clone https://github.com/Mylonas/SimpleWebApp.git
+cd SimpleWebApp
+dotnet restore
+dotnet run --project TodoApi
+```
 
-2. Install dependencies:
-    ```bash
-    dotnet restore
-    ```
+The API starts at `https://localhost:7XXX`. Open `/swagger` in a browser to explore endpoints interactively.
 
-3. Set up the SQLite database by running migrations:
-    ```bash
-    dotnet add package Microsoft.Data.Sqlite
-    ```
+### Test
 
-4. Run the application:
-    ```bash
-    dotnet run
-    ```
+```bash
+dotnet test
+```
 
 ## API Endpoints
 
-### CRUD Endpoints
+### CRUD
 
-| Method | Endpoint               | Description                     |
-| ------ | ----------------------- | ------------------------------- |
-| POST   | `/api/products`         | Create a new product            |
-| GET    | `/api/products`         | Retrieve all products           |
-| GET    | `/api/products/{id}`    | Retrieve a product by ID        |
-| PUT    | `/api/products/{id}`    | Update an existing product      |
-| DELETE | `/api/products/{id}`    | Delete a product by ID          |
+| Method | Endpoint            | Description              |
+|--------|---------------------|--------------------------|
+| GET    | `/api/products`     | List all products        |
+| GET    | `/api/products/{id}`| Get a product by ID      |
+| POST   | `/api/products`     | Create a product         |
+| PUT    | `/api/products/{id}`| Update a product         |
+| DELETE | `/api/products/{id}`| Delete a product         |
 
-### Data Querying Endpoints
+### Filtering
 
-| Method | Endpoint                        | Description                                        |
-| ------ | --------------------------------| -------------------------------------------------- |
-| GET    | `/api/products/ByPriceRange`    | Retrieve products within a specified price range   |
+| Method | Endpoint                                      | Description                          |
+|--------|-----------------------------------------------|--------------------------------------|
+| GET    | `/api/products/ByPriceRange?min=10&max=100`   | List products within a price range   |
 
-### Data Validation
+## Product Schema
 
-The API includes validation to ensure that:
-- `id` is required for each product.
+```json
+{
+  "id": 1,
+  "name": "Apple",
+  "price": 1.50,
+  "category": "Fruit"
+}
+```
 
 ## Error Handling
 
-The API includes error handling for:
-- **Not found errors**: Returns `404 Not Found` if a product by ID or search parameter isn’t available.
+| Status | Meaning                                          |
+|--------|--------------------------------------------------|
+| 400    | Invalid input (id mismatch, bad price range)     |
+| 404    | Product not found                                |
